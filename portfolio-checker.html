@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Monitor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg-base: #1e1e1e;
+    --bg-sidebar: #252526;
+    --bg-panel: #2d2d2d;
+    --bg-card: #252526;
+    --bg-hover: #2a2d2e;
+    --bg-active: #37373d;
+    --border: #3e3e42;
+    --border-subtle: #2d2d30;
+    --text-primary: #d4d4d4;
+    --text-secondary: #858585;
+    --text-muted: #6e6e6e;
+    --accent-blue: #4ec9b0;
+    --accent-blue2: #569cd6;
+    --accent-green: #4ec994;
+    --accent-red: #f44747;
+    --accent-yellow: #dcdcaa;
+    --accent-orange: #ce9178;
+    --accent-purple: #c586c0;
+    --status-bar: #007acc;
+    --tab-active: #1e1e1e;
+    --tab-inactive: #2d2d2d;
+    --scrollbar: #424242;
+    --line-highlight: #2a2d2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Geist', -apple-system, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  /* TITLE BAR */
+  .title-bar {
+    background: #3c3c3c;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+    border-bottom: 1px solid #1e1e1e;
+    flex-shrink: 0;
+    -webkit-app-region: drag;
+    user-select: none;
+  }
+  .traffic-lights { display: flex; gap: 6px; }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .dot:hover { filter: brightness(1.3); }
+  .dot.red   { background: #ff5f57; }
+  .dot.yellow{ background: #febc2e; }
+  .dot.green { background: #28c840; }
+  .title-center {
+    flex: 1;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  /* MENU BAR */
+  .menu-bar {
+    background: #3c3c3c;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 2px;
+    border-bottom: 1px solid #1e1e1e;
+    flex-shrink: 0;
+  }
+  .menu-item {
+    padding: 2px 8px;
+    color: var(--text-primary);
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.1s;
+  }
+  .menu-item:hover { background: var(--bg-active); }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ACTIVITY BAR */
+  .activity-bar {
+    width: 48px;
+    background: #333333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 4px;
+    border-right: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .activity-icon {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 18px;
+    transition: color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .activity-icon:hover { color: var(--text-primary); }
+  .activity-icon.active {
+    color: var(--text-primary);
+    border-left: 2px solid var(--status-bar);
+    border-radius: 0 3px 3px 0;
+  }
+  .activity-icon.active::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    width: 2px;
+    height: 100%;
+    background: var(--status-bar);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .sidebar-title {
+    padding: 12px 16px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .sidebar-section { flex: 1; overflow-y: auto; }
+  .sidebar-section::-webkit-scrollbar { width: 4px; }
+  .sidebar-section::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 2px; }
+
+  .tree-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px 3px 16px;
+    cursor: pointer;
+    transition: background 0.1s;
+    color: var(--text-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tree-item:hover { background: var(--bg-hover); }
+  .tree-item.active { background: var(--bg-active); }
+  .tree-item .icon { font-size: 14px; flex-shrink: 0; }
+  .tree-item .label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+  .tree-item .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tree-item .status-dot.online { background: #4ec994; box-shadow: 0 0 5px #4ec99480; }
+  .tree-item .status-dot.offline { background: #f44747; box-shadow: 0 0 5px #f4474780; }
+  .tree-item .status-dot.checking { background: #dcdcaa; animation: pulse 1s infinite; }
+  .tree-item .status-dot.unknown { background: #858585; }
+
+  .tree-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 8px 3px 8px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tree-group:hover { background: var(--bg-hover); }
+  .tree-group svg { transition: transform 0.15s; }
+  .tree-group.open svg { transform: rotate(90deg); }
+
+  /* EDITOR */
+  .editor-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-base);
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .tabs::-webkit-scrollbar { height: 2px; }
+  .tabs::-webkit-scrollbar-thumb { background: var(--scrollbar); }
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 35px;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    font-size: 12px;
+    white-space: nowrap;
+    transition: background 0.1s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tab:hover { background: var(--bg-hover); }
+  .tab.active {
+    background: var(--tab-active);
+    color: var(--text-primary);
+    border-top: 1px solid var(--status-bar);
+  }
+  .tab:not(.active) { background: var(--tab-inactive); color: var(--text-secondary); }
+  .tab .tab-icon { font-size: 13px; }
+  .tab .tab-close {
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1;
+    transition: background 0.1s, color 0.1s;
+  }
+  .tab .tab-close:hover { background: var(--bg-active); color: var(--text-primary); }
+
+  /* EDITOR CONTENT */
+  .editor-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+  }
+  .editor-content::-webkit-scrollbar { width: 10px; }
+  .editor-content::-webkit-scrollbar-track { background: var(--bg-base); }
+  .editor-content::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 5px; }
+
+  /* LINE NUMBERS */
+  .line-numbers {
+    width: 52px;
+    padding: 16px 0;
+    text-align: right;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 24px;
+    user-select: none;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-subtle);
+    padding-right: 12px;
+  }
+
+  .code-area {
+    flex: 1;
+    padding: 16px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 24px;
+  }
+
+  /* CODE COLORS */
+  .kw    { color: #569cd6; }
+  .str   { color: #ce9178; }
+  .fn    { color: #dcdcaa; }
+  .var   { color: #9cdcfe; }
+  .cmt   { color: #6a9955; font-style: italic; }
+  .num   { color: #b5cea8; }
+  .prop  { color: #4ec9b0; }
+  .op    { color: #d4d4d4; }
+  .punc  { color: #d4d4d4; }
+  .bool-t{ color: #4ec9b0; }
+  .bool-f{ color: #f44747; }
+
+  .code-line {
+    display: flex;
+    align-items: baseline;
+    min-height: 24px;
+    border-radius: 2px;
+    padding: 0 4px;
+    transition: background 0.1s;
+  }
+  .code-line:hover { background: var(--line-highlight); }
+  .code-line.highlight { background: #264f7840; border-left: 2px solid #007acc; padding-left: 6px; }
+
+  /* STATUS BADGE */
+  .inline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .inline-badge.online  { background: #4ec99422; color: #4ec994; border: 1px solid #4ec99444; }
+  .inline-badge.offline { background: #f4474722; color: #f44747; border: 1px solid #f4474744; }
+  .inline-badge.checking{ background: #dcdcaa22; color: #dcdcaa; border: 1px solid #dcdcaa44; }
+  .inline-badge.loading { background: #569cd622; color: #569cd6; border: 1px solid #569cd644; }
+
+  /* METRICS PANEL */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 24px;
+  }
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    transition: border-color 0.2s;
+  }
+  .metric-card:hover { border-color: var(--status-bar); }
+  .metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+  }
+  .metric-value.online  { color: var(--accent-green); }
+  .metric-value.offline { color: var(--accent-red); }
+  .metric-value.fast    { color: var(--accent-blue); }
+  .metric-value.slow    { color: var(--accent-yellow); }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+  /* TERMINAL */
+  .terminal {
+    height: 180px;
+    background: #0a0a0a;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .terminal-tabs {
+    display: flex;
+    align-items: center;
+    background: #1e1e1e;
+    border-bottom: 1px solid var(--border);
+    padding: 0 8px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .terminal-tab {
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-bottom: 1px solid transparent;
+  }
+  .terminal-tab.active { color: var(--text-primary); border-bottom-color: var(--status-bar); }
+  .terminal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .terminal-body::-webkit-scrollbar { width: 6px; }
+  .terminal-body::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  .log-line { display: flex; gap: 12px; margin: 1px 0; }
+  .log-time { color: #555; flex-shrink: 0; }
+  .log-info  { color: #569cd6; }
+  .log-ok    { color: #4ec994; }
+  .log-warn  { color: #dcdcaa; }
+  .log-error { color: #f44747; }
+  .log-muted { color: #555; }
+  .cursor-blink {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--text-primary);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    height: 22px;
+    background: var(--status-bar);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 12px;
+    font-size: 11.5px;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .status-bar .left  { display: flex; gap: 12px; align-items: center; }
+  .status-bar .right { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+  .status-item { display: flex; align-items: center; gap: 4px; cursor: pointer; padding: 0 4px; height: 22px; }
+  .status-item:hover { background: rgba(255,255,255,0.15); }
+  .status-ping { color: rgba(255,255,255,0.9); }
+
+  /* INPUT FORM */
+  .url-input-section {
+    padding: 12px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin: 0 24px 16px;
+  }
+  .url-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .url-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .url-label span { color: var(--accent-blue2); }
+  .url-input {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .url-input:focus { border-color: var(--status-bar); }
+  .url-input::placeholder { color: var(--text-muted); }
+  .btn-check {
+    background: var(--status-bar);
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .btn-check:hover { background: #1a85cf; }
+  .btn-check:active { transform: scale(0.97); }
+  .btn-check:disabled { background: #555; cursor: not-allowed; }
+  .btn-add {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-add:hover { border-color: var(--accent-blue2); color: var(--accent-blue2); }
+
+  .interval-select {
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+  .interval-select:focus { border-color: var(--status-bar); }
+
+  /* ANIMATIONS */
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  .fadein { animation: fadeIn 0.25s ease; }
+
+  .history-bar {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 20px;
+  }
+  .history-bar span {
+    width: 4px;
+    border-radius: 1px;
+    display: inline-block;
+    min-height: 2px;
+    transition: height 0.3s;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { width: 200px; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .activity-bar { display: none; }
+  }
+  @media (max-width: 540px) {
+    .sidebar { display: none; }
+    .metrics-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TITLE BAR -->
+<div class="title-bar">
+  <div class="traffic-lights">
+    <div class="dot red"></div>
+    <div class="dot yellow"></div>
+    <div class="dot green"></div>
+  </div>
+  <div class="title-center">Portfolio Monitor — monitor.js — Visual Studio Code</div>
+</div>
+
+<!-- MENU BAR -->
+<div class="menu-bar">
+  <div class="menu-item">File</div>
+  <div class="menu-item">Edit</div>
+  <div class="menu-item">View</div>
+  <div class="menu-item">Run</div>
+  <div class="menu-item">Terminal</div>
+  <div class="menu-item">Help</div>
+</div>
+
+<div class="main">
+
+  <!-- ACTIVITY BAR -->
+  <div class="activity-bar">
+    <div class="activity-icon active" title="Explorer">📁</div>
+    <div class="activity-icon" title="Search">🔍</div>
+    <div class="activity-icon" title="Source Control">🌿</div>
+    <div class="activity-icon" title="Run">▶️</div>
+    <div class="activity-icon" title="Extensions">🧩</div>
+    <div style="margin-top:auto">
+      <div class="activity-icon" title="Settings">⚙️</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-title">Explorer</div>
+    <div class="sidebar-section">
+      <div class="tree-group open" onclick="this.classList.toggle('open')">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><path d="M2 1l4 3-4 3z"/></svg>
+        PORTFOLIO MONITOR
+      </div>
+      <div id="sidebar-list"></div>
+
+      <div class="tree-group" style="margin-top:8px">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><path d="M2 1l4 3-4 3z"/></svg>
+        OUTLINE
+      </div>
+      <div class="tree-item" style="padding-left:28px">
+        <span class="icon">🔵</span>
+        <span class="label" style="color:#9cdcfe">checkSite(url)</span>
+      </div>
+      <div class="tree-item" style="padding-left:28px">
+        <span class="icon">🔵</span>
+        <span class="label" style="color:#9cdcfe">addTarget()</span>
+      </div>
+      <div class="tree-item" style="padding-left:28px">
+        <span class="icon">🔵</span>
+        <span class="label" style="color:#9cdcfe">startInterval()</span>
+      </div>
+      <div class="tree-item" style="padding-left:28px">
+        <span class="icon">🟡</span>
+        <span class="label" style="color:#dcdcaa">targets[]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITOR AREA -->
+  <div class="editor-area">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active">
+        <span class="tab-icon">🟨</span>
+        monitor.js
+        <span class="tab-close">×</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">📄</span>
+        README.md
+        <span class="tab-close">×</span>
+      </div>
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div style="padding:4px 16px; background:var(--bg-base); border-bottom:1px solid var(--border-subtle); font-size:12px; color:var(--text-muted); display:flex; gap:6px; align-items:center;">
+      <span>portfolio-monitor</span>
+      <span>›</span>
+      <span>src</span>
+      <span>›</span>
+      <span style="color:var(--text-primary)">monitor.js</span>
+    </div>
+
+    <!-- EDITOR CONTENT -->
+    <div class="editor-content" id="editor-scroll">
+
+      <div style="flex:1; padding-bottom: 32px;">
+
+        <!-- ADD SITE SECTION -->
+        <div class="url-input-section" style="margin-top:16px">
+          <div class="url-label">
+            <span>// Adicione a URL do seu portfólio para monitorar</span>
+          </div>
+          <div class="url-form">
+            <input class="url-input" id="urlInput" type="url" placeholder="https://meu-portfolio.com" />
+            <select class="interval-select" id="intervalSelect" title="Intervalo de verificação">
+              <option value="0">Manual</option>
+              <option value="30" selected>30s</option>
+              <option value="60">1min</option>
+              <option value="300">5min</option>
+            </select>
+            <button class="btn-add" onclick="addTarget()">+ Adicionar</button>
+            <button class="btn-check" id="checkAllBtn" onclick="checkAll()">▶ Verificar Todos</button>
+          </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-grid" id="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">// status geral</div>
+            <div class="metric-value" id="m-status" style="color:var(--text-muted)">—</div>
+            <div class="metric-sub" id="m-status-sub">aguardando verificação</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">// tempo de resposta</div>
+            <div class="metric-value" id="m-ping" style="color:var(--text-muted)">—</div>
+            <div class="metric-sub" id="m-ping-sub">última medição</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">// verificações</div>
+            <div class="metric-value" id="m-checks" style="color:var(--accent-blue2)">0</div>
+            <div class="metric-sub" id="m-checks-sub">total de pings</div>
+          </div>
+        </div>
+
+        <!-- CODE EDITOR MAIN -->
+        <div style="display:flex; margin: 0 24px;">
+          <div class="line-numbers" id="line-numbers"></div>
+          <div class="code-area" id="code-area"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="terminal">
+      <div class="terminal-tabs">
+        <div class="terminal-tab active">TERMINAL</div>
+        <div class="terminal-tab">OUTPUT</div>
+        <div class="terminal-tab">PROBLEMS</div>
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+          <button onclick="clearLogs()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:12px;">🗑 limpar</button>
+        </div>
+      </div>
+      <div class="terminal-body" id="terminal"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="left">
+    <div class="status-item">⎇ main</div>
+    <div class="status-item" id="sb-errors">⚠ 0</div>
+    <div class="status-item" id="sb-status">● aguardando</div>
+  </div>
+  <div class="right">
+    <div class="status-item" id="sb-interval">⏱ 30s</div>
+    <div class="status-item" id="sb-time">00:00:00</div>
+    <div class="status-item">JavaScript</div>
+    <div class="status-item">UTF-8</div>
+    <div class="status-item">LF</div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const state = {
+  targets: [],
+  totalChecks: 0,
+  errors: 0,
+  intervalId: null,
+  logLines: [],
+};
+
+// Default examples
+const defaultTargets = [
+  { id: 1, url: 'https://meu-portfolio.com', label: 'portfolio.com', status: 'unknown', ping: null, history: [], checks: 0, uptime: 100 },
+];
+
+state.targets = [...defaultTargets];
+
+// ─── TIME ─────────────────────────────────────────────────────────────────────
+function fmtTime(d = new Date()) {
+  return d.toTimeString().slice(0,8);
+}
+function clock() {
+  document.getElementById('sb-time').textContent = fmtTime();
+}
+setInterval(clock, 1000);
+clock();
+
+// ─── LOG ──────────────────────────────────────────────────────────────────────
+function log(msg, type='info') {
+  const terminal = document.getElementById('terminal');
+  const types = { info:'log-info', ok:'log-ok', warn:'log-warn', error:'log-error', muted:'log-muted' };
+  const icons  = { info:'ℹ', ok:'✓', warn:'⚠', error:'✗', muted:'·' };
+  const div = document.createElement('div');
+  div.className = 'log-line fadein';
+  div.innerHTML = `<span class="log-time">[${fmtTime()}]</span><span class="${types[type]||'log-info'}">${icons[type]||'·'} ${msg}</span>`;
+  terminal.appendChild(div);
+  terminal.scrollTop = terminal.scrollHeight;
+  // keep max 200 lines
+  while(terminal.children.length > 200) terminal.removeChild(terminal.firstChild);
+}
+function clearLogs() {
+  document.getElementById('terminal').innerHTML = '';
+  log('Terminal limpo.', 'muted');
+}
+
+// ─── CHECK SITE ───────────────────────────────────────────────────────────────
+async function checkSite(target) {
+  target.status = 'checking';
+  renderAll();
+  log(`Verificando ${target.url} ...`, 'info');
+  const t0 = performance.now();
+  try {
+    // We use no-cors to avoid CORS errors; we can only check reachability
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    await fetch(target.url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal, cache: 'no-cache' });
+    clearTimeout(timeout);
+    const ping = Math.round(performance.now() - t0);
+    target.status = 'online';
+    target.ping = ping;
+    target.checks++;
+    state.totalChecks++;
+    target.history.push({ online: true, ping, time: Date.now() });
+    if (target.history.length > 20) target.history.shift();
+    target.uptime = Math.round((target.history.filter(h=>h.online).length / target.history.length) * 100);
+    log(`${target.label} → ONLINE  ${ping}ms`, 'ok');
+  } catch(e) {
+    const ping = Math.round(performance.now() - t0);
+    if (e.name === 'AbortError') {
+      target.status = 'offline';
+      log(`${target.label} → TIMEOUT (${ping}ms)`, 'error');
+    } else {
+      // no-cors can throw on some browsers even when online — treat as online if it's a TypeError from CORS
+      if (e instanceof TypeError) {
+        target.status = 'online';
+        target.ping = ping;
+        log(`${target.label} → ONLINE (sem CORS) ${ping}ms`, 'ok');
+      } else {
+        target.status = 'offline';
+        log(`${target.label} → OFFLINE: ${e.message}`, 'error');
+      }
+    }
+    target.checks++;
+    state.totalChecks++;
+    target.history.push({ online: target.status === 'online', ping, time: Date.now() });
+    if (target.history.length > 20) target.history.shift();
+    target.uptime = Math.round((target.history.filter(h=>h.online).length / target.history.length) * 100);
+  }
+  renderAll();
+  updateStatusBar();
+}
+
+async function checkAll() {
+  if (!state.targets.length) { log('Nenhum alvo adicionado.', 'warn'); return; }
+  log(`Iniciando verificação de ${state.targets.length} site(s)...`, 'info');
+  for (const t of state.targets) await checkSite(t);
+  log(`Verificação concluída. Total: ${state.totalChecks} pings.`, 'ok');
+}
+
+// ─── ADD TARGET ───────────────────────────────────────────────────────────────
+function addTarget() {
+  const input = document.getElementById('urlInput');
+  let url = input.value.trim();
+  if (!url) { log('Digite uma URL válida.', 'warn'); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  try { new URL(url); } catch { log(`URL inválida: ${url}`, 'error'); return; }
+  const label = url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+  const existing = state.targets.find(t => t.url === url);
+  if (existing) { log(`${label} já está na lista.`, 'warn'); return; }
+  const t = { id: Date.now(), url, label, status: 'unknown', ping: null, history: [], checks: 0, uptime: 100 };
+  state.targets.push(t);
+  input.value = '';
+  log(`Adicionado: ${label}`, 'info');
+  renderAll();
+  checkSite(t);
+  startAutoInterval();
+}
+
+// ─── INTERVAL ─────────────────────────────────────────────────────────────────
+function startAutoInterval() {
+  const sec = parseInt(document.getElementById('intervalSelect').value);
+  if (state.intervalId) clearInterval(state.intervalId);
+  document.getElementById('sb-interval').textContent = sec ? `⏱ ${sec < 60 ? sec + 's' : (sec/60)+'min'}` : '⏱ manual';
+  if (sec > 0) {
+    state.intervalId = setInterval(checkAll, sec * 1000);
+    log(`Auto-refresh ativado: a cada ${sec}s.`, 'muted');
+  } else {
+    log('Modo manual. Clique em "Verificar Todos" para atualizar.', 'muted');
+  }
+}
+document.getElementById('intervalSelect').onchange = startAutoInterval;
+
+// ─── REMOVE ───────────────────────────────────────────────────────────────────
+function removeTarget(id) {
+  const t = state.targets.find(x => x.id === id);
+  if (t) {
+    state.targets = state.targets.filter(x => x.id !== id);
+    log(`Removido: ${t.label}`, 'muted');
+    renderAll();
+  }
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById('sidebar-list');
+  list.innerHTML = '';
+  if (!state.targets.length) {
+    list.innerHTML = '<div class="tree-item" style="color:var(--text-muted);padding-left:28px;font-size:12px">Nenhum alvo</div>';
+    return;
+  }
+  state.targets.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'tree-item';
+    div.style.paddingLeft = '24px';
+    const dotClass = t.status === 'online' ? 'online' : t.status === 'offline' ? 'offline' : t.status === 'checking' ? 'checking' : 'unknown';
+    div.innerHTML = `
+      <span class="icon">${t.status === 'checking' ? '<span class="spin">⟳</span>' : '🌐'}</span>
+      <span class="label" style="max-width:140px" title="${t.url}">${t.label}</span>
+      <span class="status-dot ${dotClass}"></span>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function renderCodeArea() {
+  const codeArea = document.getElementById('code-area');
+  const lineNums = document.getElementById('line-numbers');
+
+  const lines = [];
+
+  lines.push(`<div class="code-line"><span class="cmt">// portfolio-monitor v1.0 — gerado em ${new Date().toLocaleDateString('pt-BR')}</span></div>`);
+  lines.push(`<div class="code-line"><span class="kw">const</span> <span class="var">targets</span> <span class="op">=</span> <span class="punc">[</span></div>`);
+
+  if (!state.targets.length) {
+    lines.push(`<div class="code-line" style="padding-left:20px"><span class="cmt">// Adicione uma URL acima</span></div>`);
+  }
+
+  state.targets.forEach((t, i) => {
+    const isLast = i === state.targets.length - 1;
+    const statusColor = t.status === 'online' ? '#4ec994' : t.status === 'offline' ? '#f44747' : '#dcdcaa';
+    const statusIcon  = t.status === 'online' ? '✓' : t.status === 'offline' ? '✗' : t.status === 'checking' ? '⟳' : '?';
+    const badgeClass  = t.status === 'online' ? 'online' : t.status === 'offline' ? 'offline' : t.status === 'checking' ? 'checking' : 'loading';
+    lines.push(`<div class="code-line highlight" style="padding-left:20px">
+      <span class="punc">{ </span>
+      <span class="prop">url</span><span class="op">: </span><span class="str">"${t.url}"</span><span class="punc">, </span>
+      <span class="prop">status</span><span class="op">: </span>
+      <span style="color:${statusColor}">"${t.status}"</span>
+      <span class="inline-badge ${badgeClass}">${statusIcon} ${t.status}</span>
+      <span class="punc">,</span>
+      <span class="prop"> ping</span><span class="op">: </span><span class="num">${t.ping !== null ? t.ping + 'ms' : 'null'}</span><span class="punc">,</span>
+      <span class="prop"> uptime</span><span class="op">: </span><span class="num">${t.uptime}%</span>
+      <span class="punc">}${isLast ? '' : ','}</span>
+      <span style="margin-left:8px">
+        <button onclick="checkSite(state.targets.find(x=>x.id===${t.id}))" style="background:#007acc22;border:1px solid #007acc44;color:#569cd6;border-radius:3px;padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer" title="Verificar agora">▶</button>
+        <button onclick="removeTarget(${t.id})" style="background:#f4474722;border:1px solid #f4474744;color:#f44747;border-radius:3px;padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;margin-left:4px" title="Remover">✕</button>
+      </span>
+    </div>`);
+
+    // History sparkline
+    if (t.history.length > 0) {
+      const bars = t.history.map(h => {
+        const h_px = Math.max(2, Math.min(20, Math.round((h.ping || 200) / 30)));
+        const col = h.online ? '#4ec99488' : '#f4474788';
+        return `<span style="width:4px;height:${h_px}px;background:${col};border-radius:1px;display:inline-block;vertical-align:bottom"></span>`;
+      }).join('');
+      lines.push(`<div class="code-line" style="padding-left:32px">
+        <span class="cmt">// histórico:</span>
+        <span style="display:inline-flex;align-items:flex-end;gap:1px;margin-left:8px;vertical-align:middle">${bars}</span>
+        <span class="cmt" style="margin-left:6px">${t.checks} checks · ${t.uptime}% uptime</span>
+      </div>`);
+    }
+  });
+
+  lines.push(`<div class="code-line"><span class="punc">];</span></div>`);
+  lines.push(`<div class="code-line"></div>`);
+  lines.push(`<div class="code-line"><span class="cmt">// Última verificação: ${state.totalChecks > 0 ? new Date().toLocaleTimeString('pt-BR') : 'nunca'}</span></div>`);
+  lines.push(`<div class="code-line"><span class="kw">export default</span> <span class="punc">{</span> <span class="prop">targets</span><span class="punc">,</span> <span class="fn">checkAll</span><span class="punc">,</span> <span class="fn">addTarget</span> <span class="punc">};</span></div>`);
+
+  codeArea.innerHTML = lines.join('');
+  lineNums.innerHTML = lines.map((_, i) => `<div>${i+1}</div>`).join('');
+}
+
+function renderMetrics() {
+  const online  = state.targets.filter(t => t.status === 'online').length;
+  const offline = state.targets.filter(t => t.status === 'offline').length;
+  const total   = state.targets.length;
+  const pings   = state.targets.filter(t => t.ping !== null).map(t => t.ping);
+  const avgPing = pings.length ? Math.round(pings.reduce((a,b)=>a+b,0)/pings.length) : null;
+
+  const mStatus    = document.getElementById('m-status');
+  const mStatusSub = document.getElementById('m-status-sub');
+  const mPing      = document.getElementById('m-ping');
+  const mPingSub   = document.getElementById('m-ping-sub');
+  const mChecks    = document.getElementById('m-checks');
+  const mChecksSub = document.getElementById('m-checks-sub');
+
+  if (total === 0) {
+    mStatus.textContent = '—';
+    mStatus.className = 'metric-value';
+    mStatusSub.textContent = 'aguardando...';
+  } else if (offline > 0) {
+    mStatus.textContent = `${offline}/${total} OFFLINE`;
+    mStatus.className = 'metric-value offline';
+    mStatusSub.textContent = `${online} online`;
+  } else if (online === total) {
+    mStatus.textContent = `${total}/${total} ONLINE`;
+    mStatus.className = 'metric-value online';
+    mStatusSub.textContent = 'tudo funcionando';
+  } else {
+    mStatus.textContent = 'verificando...';
+    mStatus.className = 'metric-value';
+    mStatusSub.textContent = '⟳ aguarde';
+  }
+
+  if (avgPing !== null) {
+    mPing.textContent = `${avgPing}ms`;
+    mPing.className = avgPing < 500 ? 'metric-value fast' : 'metric-value slow';
+    mPingSub.textContent = avgPing < 500 ? 'resposta rápida' : 'resposta lenta';
+  } else {
+    mPing.textContent = '—';
+    mPing.className = 'metric-value';
+    mPingSub.textContent = 'sem dados';
+  }
+
+  mChecks.textContent = state.totalChecks;
+  mChecksSub.textContent = `${total} site(s) monitorado(s)`;
+}
+
+function updateStatusBar() {
+  const offline = state.targets.filter(t => t.status === 'offline').length;
+  document.getElementById('sb-errors').textContent = `⚠ ${offline} offline`;
+  const onl = state.targets.filter(t => t.status === 'online').length;
+  const total = state.targets.length;
+  document.getElementById('sb-status').textContent = total === 0 ? '● aguardando' : `● ${onl}/${total} online`;
+}
+
+function renderAll() {
+  renderSidebar();
+  renderCodeArea();
+  renderMetrics();
+  updateStatusBar();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+log('Portfolio Monitor iniciado.', 'ok');
+log('Adicione a URL do seu portfólio e clique em "Verificar Todos".', 'info');
+log('Use o seletor de intervalo para verificação automática.', 'muted');
+renderAll();
+startAutoInterval();
+</script>
+</body>
+</html>
