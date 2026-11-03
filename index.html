@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Joshua Sousa — aspiring software engineer focused on backend development, Python and APIs.">
+  <meta name="theme-color" content="#0b1020">
+  <title>Joshua Sousa | Software Developer Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home"><span class="brand-mark">JS</span><span>Joshua Sousa</span></a>
+    <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#experience">Experience</a>
+      <a class="nav-cta" href="cv.html">View CV ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="pulse"></span> OPEN TO IT APPRENTICESHIPS & JUNIOR OPPORTUNITIES</p>
+        <h1>Building practical<br><span class="gradient">software solutions.</span></h1>
+        <p class="hero-lead">I'm Joshua — an aspiring software engineer developing my skills in Python, Java and backend technologies. I enjoy understanding how systems work, building useful tools and learning how APIs connect applications.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#projects">Explore my work <span>↘</span></a>
+          <a class="button secondary" href="cv.html">View my CV <span>↗</span></a>
+        </div>
+        <div class="hero-meta"><span>Based in the United Kingdom</span><span class="meta-dot"></span><span>Currently studying Digital & IT</span></div>
+      </div>
+      <div class="code-card" aria-label="Code preview">
+        <div class="code-top"><div class="window-dots"><i></i><i></i><i></i></div><span>developer.py</span><span class="code-lang">PYTHON</span></div>
+        <pre><code><span class="code-purple">class</span> <span class="code-yellow">Developer</span>:
+    <span class="code-purple">def</span> <span class="code-blue">__init__</span>(self):
+        self.name = <span class="code-green">"Joshua Sousa"</span>
+        self.focus = [
+            <span class="code-green">"Backend"</span>,
+            <span class="code-green">"Python"</span>,
+            <span class="code-green">"APIs"</span>
+        ]
+        self.learning = <span class="code-green">True</span>
+
+    <span class="code-purple">def</span> <span class="code-blue">build</span>(self, idea):
+        <span class="code-purple">return</span> make_it_useful(idea)</code></pre>
+        <div class="code-footer"><span><b class="status-dot"></b> Learning by building</span><span>UTF-8</span></div>
+      </div>
+      <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
+    </section>
+
+    <section class="section about-section" id="about">
+      <div class="section-heading"><p class="eyebrow">01 / ABOUT ME</p><h2>Curious about what happens <span class="muted">behind the screen.</span></h2></div>
+      <div class="about-grid">
+        <p class="about-text">I am a Digital and IT student at Sandwell College with a growing interest in software engineering, backend development and cybersecurity. I am building a foundation in programming and databases, and learning to turn ideas into working projects.</p>
+        <div class="info-panel"><div class="info-row"><span>Current study</span><strong>Digital & IT Skills — Level 2</strong></div><div class="info-row"><span>Primary interest</span><strong>Backend & API development</strong></div><div class="info-row"><span>Career goal</span><strong>IT apprenticeship / junior role</strong></div><div class="info-row"><span>Languages</span><strong>English · Portuguese · Spanish</strong></div></div>
+      </div>
+    </section>
+
+    <section class="section" id="skills">
+      <div class="section-heading"><p class="eyebrow">02 / TECHNICAL SKILLS</p><h2>Tools I'm <span class="muted">learning and using.</span></h2><p class="section-intro">A transparent snapshot of my current learning journey. I am continuing to strengthen these skills through practice and projects.</p></div>
+      <div class="skills-grid">
+        <article class="skill-card"><span class="skill-icon">Py</span><h3>Python</h3><p>Programming fundamentals, functions, control flow and small automation scripts.</p><span class="skill-tag">Developing</span></article>
+        <article class="skill-card"><span class="skill-icon java">J</span><h3>Java</h3><p>Learning object-oriented programming and core language concepts.</p><span class="skill-tag">Learning</span></article>
+        <article class="skill-card"><span class="skill-icon js">JS</span><h3>JavaScript</h3><p>Programming fundamentals and interactive web functionality.</p><span class="skill-tag">Learning</span></article>
+        <article class="skill-card"><span class="skill-icon html">5</span><h3>HTML & CSS</h3><p>Semantic page structure, responsive layouts and styling.</p><span class="skill-tag">Learning</span></article>
+        <article class="skill-card"><span class="skill-icon sql">DB</span><h3>SQL</h3><p>Learning relational database concepts and queries.</p><span class="skill-tag">Learning</span></article>
+        <article class="skill-card"><span class="skill-icon api">API</span><h3>FastAPI</h3><p>Backend API development is a key area I am working towards.</p><span class="skill-tag">Next focus</span></article>
+        <article class="skill-card"><span class="skill-icon git">Git</span><h3>Git & GitHub</h3><p>Version control, repositories and documenting projects.</p><span class="skill-tag">Developing</span></article>
+        <article class="skill-card"><span class="skill-icon linux">⌘</span><h3>Linux</h3><p>Foundational knowledge of operating systems and command-line tools.</p><span class="skill-tag">Foundation</span></article>
+      </div>
+    </section>
+
+    <section class="section projects-section" id="projects">
+      <div class="section-heading"><p class="eyebrow">03 / SELECTED WORK</p><h2>Learning through <span class="muted">real projects.</span></h2><p class="section-intro">These are practical learning projects, not commercial client work. I will add demos, documentation and improvements as each project develops.</p></div>
+      <div class="projects-grid">
+        <article class="project-card featured"><div class="project-top"><span class="project-type">PYTHON · ALGORITHMS</span><span class="project-number">01</span></div><h3>Morning Routine Algorithm</h3><p>A Python exercise that represents a morning routine as a sequence of logical steps. Focused on algorithmic thinking, ordering and clear program flow.</p><div class="chips"><span>Python</span><span>Logic</span><span>Beginner project</span></div><a class="project-link" href="https://github.com/joshuaomg/Morning-Routine-Algorithm-Python" target="_blank" rel="noreferrer">Repository <span>↗</span></a><p class="project-note">Repository visibility may be restricted; make it public if you want recruiters to view it.</p></article>
+        <article class="project-card"><div class="project-top"><span class="project-type">JAVASCRIPT · WEB</span><span class="project-number">02</span></div><h3>Portfolio Monitor</h3><p>A browser-based interface concept for adding website URLs and checking reachability, with status indicators and a monitoring dashboard.</p><div class="chips"><span>JavaScript</span><span>HTML</span><span>CSS</span></div><a class="project-link" href="https://github.com/joshuaomg/-port-monitor" target="_blank" rel="noreferrer">Repository <span>↗</span></a></article>
+        <article class="project-card"><div class="project-top"><span class="project-type">PYTHON · CLI</span><span class="project-number">03</span></div><h3>Task Manager</h3><p>A command-line task manager planned to practise input handling, lists, functions and program structure. This project is still in development.</p><div class="chips"><span>Python</span><span>CLI</span><span>In progress</span></div><span class="project-link subdued">Coming as the project is completed</span></article>
+        <article class="project-card"><div class="project-top"><span class="project-type">BACKEND · API</span><span class="project-number">04</span></div><h3>FastAPI Learning Project</h3><p>Planned REST API project to practise endpoints, request validation and connecting an API to a database.</p><div class="chips"><span>Python</span><span>FastAPI</span><span>SQL</span></div><span class="project-link subdued">Planned project</span></article>
+      </div>
+    </section>
+
+    <section class="section experience-section" id="experience">
+      <div class="section-heading"><p class="eyebrow">04 / EXPERIENCE & EDUCATION</p><h2>Building knowledge <span class="muted">step by step.</span></h2></div>
+      <div class="timeline">
+        <article class="timeline-item"><div class="timeline-date">CURRENT STUDY</div><div><h3>Sandwell College</h3><p class="timeline-role">Level 2 — Gateway Diploma in Digital and IT Skills</p><p>Developing digital and IT foundations through college study and practical coursework.</p></div></article>
+        <article class="timeline-item"><div class="timeline-date">VIRTUAL EXPERIENCE</div><div><h3>Online Work Experience Programmes</h3><p class="timeline-role">Amazon · Rolls-Royce · Equifax</p><p>Participated in online work-experience activities associated with these organisations, gaining exposure to professional environments and career pathways. These were virtual programmes, not paid employment.</p></div></article>
+        <article class="timeline-item"><div class="timeline-date">CERTIFICATES / TRAINING</div><div><h3>IT Foundations</h3><p class="timeline-role">Introduction to Linux · Linux Operating System</p><p>Completed introductory learning in Linux and operating-system fundamentals. Additional certificates can be added with their exact titles and providers.</p></div></article>
+      </div>
+    </section>
+
+    <section class="contact-section section" id="contact"><p class="eyebrow">05 / LET'S CONNECT</p><h2>Interested in an opportunity?</h2><p>I'm looking to grow through an IT apprenticeship, entry-level opportunity or further practical experience in technology.</p><div class="hero-actions"><a class="button primary" href="https://github.com/joshuaomg" target="_blank" rel="noreferrer">GitHub profile ↗</a><a class="button secondary" href="cv.html">Open CV ↗</a></div></section>
+  </main>
+  <footer><span>© <span id="year"></span> Joshua Sousa</span><span>Designed and built with HTML, CSS & JavaScript.</span><a href="#home">Back to top ↑</a></footer>
+  <script src="script.js"></script>
+</body>
+</html>
